@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/movement_title"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginBottom="24dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/movement_product_code"/>
+
+    <EditText
+        android:id="@+id/edtMovementCode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="48dp"
+        android:hint="@string/movement_code_hint"
+        android:inputType="text"
+        android:autofillHints="username"
+        android:layout_marginBottom="16dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/movement_type"/>
+
+    <RadioGroup
+        android:id="@+id/radioMovementType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="16dp">
+
+        <RadioButton
+            android:id="@+id/radioEntry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/movement_entry"/>
+
+        <RadioButton
+            android:id="@+id/radioExit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/movement_exit"
+            android:layout_marginStart="24dp"/>
+
+    </RadioGroup>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/movement_quantity"/>
+
+    <EditText
+        android:id="@+id/edtMovementQuantity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="48dp"
+        android:hint="@string/movement_quantity_hint"
+        android:inputType="number"
+        android:layout_marginBottom="24dp"
+        android:autofillHints="none" />
+
+    <Button
+        android:id="@+id/btnSaveMovement"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/movement_save"/>
+
+</LinearLayout>

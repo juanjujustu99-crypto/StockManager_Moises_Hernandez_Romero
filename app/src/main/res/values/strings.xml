@@ -1,0 +1,77 @@
+<resources>
+    <string name="app_name">StockManager</string>
+
+    <string name="register_product_title">Registrar producto</string>
+    <string name="register_product_description">Ingresa los datos del producto que deseas agregar al inventario.</string>
+    <string name="product_code_hint">Código del producto</string>
+    <string name="product_name_hint">Nombre del producto</string>
+    <string name="product_quantity_hint">Cantidad inicial</string>
+    <string name="save_product">Guardar producto</string>
+
+    <string name="main_title">StockManager</string>
+    <string name="main_description">Sistema de gestión de inventario</string>
+    <string name="btn_products">Consultar productos</string>
+    <string name="btn_register">Registrar producto</string>
+    <string name="btn_movement">Registrar entrada o salida</string>
+
+
+    <string name="movement_title">Registrar movimiento</string>
+    <string name="movement_product_code">Código del producto</string>
+    <string name="movement_code_hint">Ej. PROD001</string>
+    <string name="movement_type">Tipo de movimiento</string>
+    <string name="movement_entry">Entrada</string>
+    <string name="movement_exit">Salida</string>
+    <string name="movement_quantity">Cantidad</string>
+    <string name="movement_quantity_hint">Ingresa la cantidad</string>
+    <string name="movement_save">Guardar movimiento</string>
+
+
+    <string name="btn_history">Consultar historial de movimientos</string>
+    <string name="history_title">Historial de movimientos</string>
+    <string name="history_loading">Cargando movimientos...</string>
+
+    <string name="history_empty">No hay movimientos registrados.</string>
+    <string name="history_error">No fue posible cargar los movimientos.</string>
+    <string name="history_product_unavailable">Producto no disponible</string>
+    <string name="history_code_unavailable">Código no disponible</string>
+    <string name="history_error_message">Error al consultar historial: %1$s</string>
+
+
+    <!-- Pantalla de administración de productos -->
+    <string name="management_title">Administrar productos</string>
+    <string name="management_description">Selecciona un producto para administrarlo.</string>
+
+    <!-- Consulta de productos -->
+    <string name="management_select_product">Selecciona un producto</string>
+    <string name="management_empty">No hay productos registrados.</string>
+    <string name="management_close">Cerrar</string>
+    <string name="management_query_error">Error al consultar productos: %1$s</string>
+
+    <!-- Opciones del producto -->
+    <string name="management_edit">Editar producto</string>
+    <string name="management_delete">Eliminar producto</string>
+    <string name="management_cancel">Cancelar</string>
+
+    <!-- Confirmación de eliminación -->
+    <string name="management_delete_title">Eliminar producto</string>
+    <string name="management_delete_message">¿Deseas eliminar %1$s?
+
+Solo se pueden eliminar productos que no tengan movimientos registrados.</string>
+
+    <!-- Mensajes de resultado -->
+    <string name="management_delete_success">Producto eliminado correctamente.</string>
+    <string name="management_delete_error">Error al eliminar: %1$s</string>
+
+    <!-- Edición de productos -->
+    <string name="edit_product_title">Editar producto</string>
+    <string name="edit_product_description">Modifica el código o nombre del producto. La cantidad actual se conservará.</string>
+    <string name="update_product">Guardar cambios</string>
+    <string name="edit_product_success">Producto actualizado correctamente.</string>
+    <string name="edit_product_error">Error al actualizar producto: %1$s</string>
+    <string name="edit_product_code_exists">El código ya pertenece a otro producto.</string>
+    <string name="edit_product_not_found">No se encontró el producto que deseas editar.</string>
+
+
+
+
+</resources>
