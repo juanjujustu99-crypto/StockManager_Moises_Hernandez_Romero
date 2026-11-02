@@ -1,154 +1,170 @@
 
 package com.example.stockmanager
 
+import android.content.Intent
 import android.os.Bundle
-import android.widget.LinearLayout
+import android.view.View
+import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.launch
 
 class ProductManagementActivity : AppCompatActivity() {
 
     private lateinit var productRepository: ProductRepository
     private lateinit var movementRepository: MovementRepository
+    private lateinit var productAdapter: ProductAdapter
+
+    private lateinit var recyclerProducts: RecyclerView
+    private lateinit var txtEmpty: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val layout = LinearLayout(this)
-        layout.orientation = LinearLayout.VERTICAL
-        layout.setPadding(32, 32, 32, 32)
+        setContentView(R.layout.activity_product_management)
 
-        val title = TextView(this)
-        title.setText(R.string.management_title)
-        title.textSize = 24f
-        layout.addView(title)
+        val main = findViewById<View>(R.id.main)
 
-        val description = TextView(this)
-        description.setText(R.string.management_description)
-        description.textSize = 16f
-        layout.addView(description)
+        ViewCompat.setOnApplyWindowInsetsListener(main) { view, insets ->
 
-        setContentView(layout)
+            val systemBars = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars()
+            )
 
+            view.setPadding(
+                20 + systemBars.left,
+                20 + systemBars.top,
+                20 + systemBars.right,
+                20 + systemBars.bottom
+            )
+
+            insets
+        }
+
+        // Conectar base de datos
         val database = DatabaseProvider.getDatabase(this)
 
         productRepository = ProductRepository(database.productDao())
         movementRepository = MovementRepository(database)
 
-        mostrarProductos()
+        // Configurar RecyclerView
+        recyclerProducts =
+            findViewById(R.id.recyclerProducts)
+
+        txtEmpty = findViewById(R.id.txtEmpty)
+
+        productAdapter = ProductAdapter(
+            onEditClick = { product ->
+                editarProducto(product)
+            },
+            onDeleteClick = { product ->
+                confirmarEliminacion(product)
+            }
+        )
+
+        recyclerProducts.layoutManager =
+            LinearLayoutManager(this)
+
+        recyclerProducts.adapter = productAdapter
+
+        // Boton para registrar productos
+        findViewById<Button>(R.id.btnAddProduct)
+            .setOnClickListener {
+
+                val intent = Intent(
+                    this,
+                    RegisterProductActivity::class.java
+                )
+
+                startActivity(intent)
+            }
     }
 
-    private fun mostrarProductos() {
+    override fun onResume() {
+        super.onResume()
+
+        cargarProductos()
+    }
+
+    private fun cargarProductos() {
+
         lifecycleScope.launch {
+
             try {
+
                 val products = productRepository.getAllProducts()
 
-                if (products.isEmpty()) {
-                    Toast.makeText(
-                        this@ProductManagementActivity,
-                        R.string.management_empty,
-                        Toast.LENGTH_LONG
-                    ).show()
+                productAdapter.submitList(products)
 
-                    finish()
-                    return@launch
+                if (products.isEmpty()) {
+
+                    txtEmpty.visibility = View.VISIBLE
+                    recyclerProducts.visibility = View.GONE
+
+                } else {
+
+                    txtEmpty.visibility = View.GONE
+                    recyclerProducts.visibility = View.VISIBLE
                 }
 
-                val productNames = products.map { product ->
-                    "${product.code} - ${product.name} " +
-                            "(Cantidad: ${product.quantity})"
-                }.toTypedArray()
-
-                AlertDialog.Builder(this@ProductManagementActivity)
-                    .setTitle(R.string.management_select_product)
-                    .setItems(productNames) { _, position ->
-                        val product = products[position]
-                        mostrarOpciones(product)
-                    }
-                    .setNegativeButton(R.string.management_close) { _, _ ->
-                        finish()
-                    }
-                    .setOnCancelListener {
-                        finish()
-                    }
-                    .show()
-
             } catch (e: Exception) {
+
                 Toast.makeText(
                     this@ProductManagementActivity,
-                    getString(
-                        R.string.management_query_error,
-                        e.message ?: "Error desconocido"
-                    ),
+                    "Error al consultar productos: ${e.message}",
                     Toast.LENGTH_LONG
                 ).show()
-
-                finish()
             }
         }
     }
 
-    private fun mostrarOpciones(product: Product) {
-        val opciones = arrayOf(
-            getString(R.string.management_edit),
-            getString(R.string.management_delete)
-        )
-
-        AlertDialog.Builder(this)
-            .setTitle(product.name)
-            .setItems(opciones) { _, position ->
-                when (position) {
-                    0 -> editarProducto(product)
-                    1 -> confirmarEliminacion(product)
-                }
-            }
-            .setNegativeButton(R.string.management_cancel, null)
-            .show()
-    }
-
     private fun editarProducto(product: Product) {
-        val intent = android.content.Intent(
+
+        val intent = Intent(
             this,
             RegisterProductActivity::class.java
         )
 
         intent.putExtra("product_id", product.id)
-        intent.putExtra("product_code", product.code)
-        intent.putExtra("product_name", product.name)
 
         startActivity(intent)
     }
 
     private fun confirmarEliminacion(product: Product) {
+
         AlertDialog.Builder(this)
-            .setTitle(R.string.management_delete_title)
+            .setTitle("Eliminar producto")
             .setMessage(
-                getString(
-                    R.string.management_delete_message,
-                    product.name
-                )
+                "Estas seguro de eliminar ${product.name}?"
             )
-            .setPositiveButton(R.string.management_delete) { _, _ ->
+            .setPositiveButton("Eliminar") { _, _ ->
                 eliminarProducto(product)
             }
-            .setNegativeButton(R.string.management_cancel, null)
+            .setNegativeButton("Cancelar", null)
             .show()
     }
 
     private fun eliminarProducto(product: Product) {
+
         lifecycleScope.launch {
+
             try {
+
                 val movimientos =
                     movementRepository.getMovementsByProduct(product.id)
 
                 if (movimientos.isNotEmpty()) {
+
                     Toast.makeText(
                         this@ProductManagementActivity,
-                        "No se puede eliminar este producto porque tiene movimientos registrados. Se conservará su historial.",
+                        "No se puede eliminar este producto porque tiene movimientos registrados.",
                         Toast.LENGTH_LONG
                     ).show()
 
@@ -159,19 +175,17 @@ class ProductManagementActivity : AppCompatActivity() {
 
                 Toast.makeText(
                     this@ProductManagementActivity,
-                    R.string.management_delete_success,
+                    "Producto eliminado correctamente.",
                     Toast.LENGTH_LONG
                 ).show()
 
-                mostrarProductos()
+                cargarProductos()
 
             } catch (e: Exception) {
+
                 Toast.makeText(
                     this@ProductManagementActivity,
-                    getString(
-                        R.string.management_delete_error,
-                        e.message ?: "Error desconocido"
-                    ),
+                    "Error al eliminar: ${e.message}",
                     Toast.LENGTH_LONG
                 ).show()
             }

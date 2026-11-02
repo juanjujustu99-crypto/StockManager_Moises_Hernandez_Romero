@@ -20,7 +20,8 @@ object DatabaseProvider {
             )
                 .addMigrations(
                     StockDatabase.MIGRATION_1_2,
-                    StockDatabase.MIGRATION_2_3
+                    StockDatabase.MIGRATION_2_3,
+                    StockDatabase.MIGRATION_3_4
                 )
                 .build()
 
